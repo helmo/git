@@ -864,7 +864,11 @@ cmd_pull-all()
 {
 	git config -f .gittrees -l | grep subtree | grep path | grep -o '=.*' | grep -o '[^=].*' |
 	while read path; do
-		git subtree pull -P $path $(git config -f .gittrees subtree.$path.url) $(git config -f .gittrees subtree.$path.branch) || exit $?
+		if [ -n "$squash" ]; then
+			git subtree pull -P $path --squash $(git config -f .gittrees subtree.$path.url) $(git config -f .gittrees subtree.$path.branch) || exit $?
+		else
+			git subtree pull -P $path $(git config -f .gittrees subtree.$path.url) $(git config -f .gittrees subtree.$path.branch) || exit $?
+		fi
 	done
 }
 
@@ -872,7 +876,11 @@ cmd_push-all()
 {
 	git config -f .gittrees -l | grep subtree | grep path | grep -o '=.*' | grep -o '[^=].*' |
 	while read path; do
-		git subtree push -P $path $(git config -f .gittrees subtree.$path.url) $(git config -f .gittrees subtree.$path.branch) || exit $?
+		if [ -n "$squash" ]; then
+			git subtree push -P $path --squash $(git config -f .gittrees subtree.$path.url) $(git config -f .gittrees subtree.$path.branch) || exit $?
+		else
+			git subtree push -P $path $(git config -f .gittrees subtree.$path.url) $(git config -f .gittrees subtree.$path.branch) || exit $?
+		fi
 	done
 }
 
